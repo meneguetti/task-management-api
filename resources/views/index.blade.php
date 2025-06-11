@@ -5,72 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Task Management Board</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .board {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .column {
-      flex: 1;
-      min-width: 250px;
-      max-width: 300px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 10px;
-      position: relative;
-    }
-    .column h2 {
-      text-align: center;
-    }
-    .column-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .add-task {
-      cursor: pointer;
-      font-size: 18px;
-    }
-    .task-count {
-      font-size: 14px;
-      color: #555;
-    }
-    .task {
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
-      cursor: move;
-      background-color: #fff;
-    }
-    .task.backlog { background-color: #ccc; }
-    .task.todo { background-color: #fff; }
-    .task.in_progress { background-color: #add8e6; }
-    .task.done { background-color: #90ee90; }
-    .drag-over {
-      background-color: #d0f0c0;
-    }
-    .modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+    h1 { text-align: center; margin-bottom: 20px;}
+    .board { display: flex; padding: 20px; gap: 20px; overflow-x: auto; }
+    .column { flex: 1; background: #fff; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; min-width: 250px; max-height: 100vh; overflow-y: auto; position: relative; }
+    .column-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .column-title { font-size: 18px; font-weight: bold; }
+    .column-count { background: #ccc; border-radius: 12px; padding: 2px 8px; font-size: 12px; }
+    .add-task { cursor: pointer; font-size: 20px; margin-left: 10px; }
+    .droppable { flex: 1; padding: 5px; transition: background 0.3s ease; }
+    .droppable.hover { background: #c8e6c9; border-radius: 4px; }
+    .task { background: #fff; border-radius: 6px; padding: 10px; margin-bottom: 10px; cursor: move; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .backlog .task { background: #ddd; }
+    .todo .task { background: #fff; }
+    .in_progress .task { background: #bbdefb; }
+    .done .task { background: #c8e6c9; }
+    .modal, .confirm-modal { display: none; position: fixed; top: 10%; left: 50%; transform: translateX(-50%); width: 400px; background: #fff; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; padding: 20px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 18px; font-weight: bold; }
     .modal-content {
       background: #fff;
       padding: 20px;
@@ -102,49 +55,19 @@
       cursor: pointer;
       margin-left: 10px;
     }
-    .error {
-      color: red;
-      font-size: 13px;
-    }
-    
+    .close-modal { cursor: pointer; font-size: 20px; }
+    .modal-body { margin-top: 10px; }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    .error { color: red; font-size: 12px; }
+    .trash { color: red; cursor: pointer; font-size: 18px; margin-left: auto; }
+    #no-more { text-align: center; color: #666; margin-top: 10px; display: none; }
   </style>
 </head>
 <body>
   <h1>Task Management Board</h1>
-  <div class="board" id="board">
-    <div class="column" data-status="backlog">
-      <div class="column-header">
-        <h2>Backlog</h2>
-        <span class="add-task" onclick="openCreateModal('backlog')">➕</span>
-      </div>
-      <div class="task-count" id="count-backlog"></div>
-      <div class="task-list" id="backlog"></div>
-    </div>
-    <div class="column" data-status="todo">
-      <div class="column-header">
-        <h2>Todo</h2>
-        <span class="add-task" onclick="openCreateModal('todo')">➕</span>
-      </div>
-      <div class="task-count" id="count-todo"></div>
-      <div class="task-list" id="todo"></div>
-    </div>
-    <div class="column" data-status="in_progress">
-      <div class="column-header">
-        <h2>In Progress</h2>
-        <span class="add-task" onclick="openCreateModal('in_progress')">➕</span>
-      </div>
-      <div class="task-count" id="count-in_progress"></div>
-      <div class="task-list" id="in_progress"></div>
-    </div>
-    <div class="column" data-status="done">
-      <div class="column-header">
-        <h2>Done</h2>
-        <span class="add-task" onclick="openCreateModal('done')">➕</span>
-      </div>
-      <div class="task-count" id="count-done"></div>
-      <div class="task-list" id="done"></div>
-    </div>
-  </div>
+  <div class="board" id="board"></div>
 
   <!-- Edit Modal -->
   <div id="modal" class="modal" style="display:none;">
@@ -216,64 +139,162 @@
       <button onclick="closeModal('delete-modal')">No</button>
     </div>
   </div>
-  
+  <div id="no-more">No more tasks to display</div>
+
   <script>
-    let tasks = [];
-    let draggedTask = null;
-    let currentTaskId = null;
     const headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    };
+    const columns = ['backlog', 'todo', 'in_progress', 'done'];
+    const priorities = { low: 'Low', medium: 'Medium', high: 'High' };
+    let tasks = [];
+    let nextPageUrl = '/api/tasks';
+
+    function createColumn(status) {
+      const column = document.createElement('div');
+      column.className = `column ${status}`;
+
+      const header = document.createElement('div');
+      header.className = 'column-header';
+      header.innerHTML = `
+        <span class="column-title">${status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
+        <span class="column-count" id="count-${status}">0</span>
+        <span class="add-task" onclick="openCreateModal('${status}')">+</span>
+      `;
+
+      const droppable = document.createElement('div');
+      droppable.className = 'droppable';
+      droppable.dataset.status = status;
+      droppable.ondragover = e => {
+        e.preventDefault();
+        droppable.classList.add('hover');
+      };
+      droppable.ondragleave = () => droppable.classList.remove('hover');
+      droppable.ondrop = e => {
+        const id = e.dataTransfer.getData('text');
+        droppable.classList.remove('hover');
+        updateTaskStatus(id, status);
+      };
+
+      column.appendChild(header);
+      column.appendChild(droppable);
+      document.getElementById('board').appendChild(column);
+    }
+
+    function renderTask(task) {
+      const div = document.createElement('div');
+      div.className = 'task';
+      div.draggable = true;
+      div.dataset.id = task.id;
+      div.innerHTML = `
+        <div><strong>${task.title}</strong></div>
+        <div>Priority: ${priorities[task.priority]}</div>
+        <div>Due: ${task.due_date}</div>
+      `;
+      div.ondragstart = e => e.dataTransfer.setData('text', task.id);
+      div.onclick = () => openModal(task.id);
+      document.querySelector(`.${task.status} .droppable`).appendChild(div);
+    }
+
+    async function updateTaskStatus(id, status) {
+      try {
+        await fetch(`/api/tasks/${id}`, {
+          method: 'PATCH',
+          headers: headers,
+          body: JSON.stringify({ status })
+        });
+        tasks = [];
+        loadTasks(true);
+      } catch (err) {
+        alert('Error updating status.');
+      }
+    }
+
+    function retrieveUniqueTasks(newTasks) {
+        const existingIds = new Set(tasks.map(t => t.id));
+        uniqueTasks = [];
+        newTasks.forEach(task => {
+            if (!existingIds.has(task.id)) {
+                uniqueTasks.push(task);
+            }
+        });
+
+        return uniqueTasks;
+    }
+
+    async function loadTasks(reset = false) {
+      if (reset) {
+        document.getElementById('board').innerHTML = '';
+        columns.forEach(createColumn);
+        nextPageUrl = '/api/tasks';
+      }
+      if (!nextPageUrl) return;
+
+      const res = await fetch(nextPageUrl, { headers: { 'Accept': 'application/json' } });
+      const data = await res.json();
+      nextPageUrl = data.links?.next;
+      uniqueTasks = retrieveUniqueTasks(data.data);
+        
+      uniqueTasks.forEach(task => {
+        tasks.push(task);
+        renderTask(task);
+      });
+
+      updateCounts();
+
+      if (!nextPageUrl) {
+        const msg = document.getElementById('no-more');
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 5000);
+      }
+    }
+
+    function updateCounts() {
+      columns.forEach(col => {
+        const count = document.querySelectorAll(`.${col} .task`).length;
+        document.getElementById(`count-${col}`).textContent = count;
+      });
+    }
+
+    window.onscroll = function () {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        loadTasks();
+      }
     };
 
-    async function fetchTasks() {
-      const res = await fetch('/api/tasks');
-      tasks = await res.json();
-      renderTasks();
+    function openCreateModal(status) {
+      document.getElementById('create-status').value = status;
+      document.getElementById('create-title').value = '';
+      document.getElementById('create-description').value = '';
+      document.getElementById('create-priority').value = 'medium';
+      document.getElementById('create-due-date').value = '';
+      document.getElementById('create-modal').style.display = 'flex';
     }
 
-    function renderTasks() {
-      ['backlog','todo','in_progress','done'].forEach(status => {
-        const col = document.getElementById(status);
-        col.innerHTML = '';
-        const filtered = tasks.filter(t => t.status === status);
-        document.getElementById('count-' + status).textContent = `${filtered.length} tasks`;
-        filtered.forEach(task => {
-          const taskEl = document.createElement('div');
-          taskEl.className = `task ${task.status}`;
-          taskEl.setAttribute('draggable', 'true');
-          taskEl.dataset.id = task.id;
-          taskEl.innerHTML = `<strong>${task.title}</strong><br>Priority: ${task.priority}<br>Due: ${task.due_date}`;
-          taskEl.addEventListener('dragstart', () => draggedTask = task);
-          taskEl.addEventListener('click', () => openModal(task.id));
-          col.appendChild(taskEl);
-        });
+    function createTask() {
+      const task = {
+        title: document.getElementById('create-title').value,
+        description: document.getElementById('create-description').value,
+        status: document.getElementById('create-status').value,
+        priority: document.getElementById('create-priority').value,
+        due_date: document.getElementById('create-due-date').value,
+      };
+      fetch('/api/tasks', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(task)
+      }).then(() => {
+        document.getElementById('create-modal').style.display = 'none';
+        loadTasks();
       });
     }
 
-    document.querySelectorAll('.task-list').forEach(column => {
-      column.addEventListener('dragover', e => {
-        e.preventDefault();
-        column.classList.add('drag-over');
-      });
-      column.addEventListener('dragleave', () => column.classList.remove('drag-over'));
-      column.addEventListener('drop', async () => {
-        column.classList.remove('drag-over');
-        if (draggedTask) {
-          const newStatus = column.id;
-          if (draggedTask.status !== newStatus) {
-            await fetch(`/api/tasks/${draggedTask.id}`, {
-              method: 'PATCH',
-              headers: headers,
-              body: JSON.stringify({ status: newStatus })
-            });
-            draggedTask.status = newStatus;
-            renderTasks();
-          }
-        }
-      });
-    });
-
+    window.onclick = e => {
+      if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+      }
+    };
     function openModal(id) {
       const task = tasks.find(t => t.id == id);
       currentTaskId = id;
@@ -290,7 +311,7 @@
         method: 'PATCH',
         headers: headers,
         body: JSON.stringify({ [field]: value })
-      }).then(fetchTasks);
+      }).then(loadTasks());
     }
 
     ['modal-title','modal-description','modal-status','modal-priority','modal-due-date'].forEach(id => {
@@ -327,47 +348,16 @@
         } else {
           document.getElementById('modal').style.display = 'none';
           document.getElementById('delete-modal').style.display = 'none';
-          fetchTasks();
+          tasks = [];
+          loadTasks(true);
         }
       } catch (e) {
         alert('Error deleting task.');
       }
     }
 
-    function openCreateModal(status) {
-      document.getElementById('create-status').value = status;
-      document.getElementById('create-title').value = '';
-      document.getElementById('create-description').value = '';
-      document.getElementById('create-priority').value = 'Medium';
-      document.getElementById('create-due-date').value = '';
-      document.getElementById('create-modal').style.display = 'flex';
-    }
 
-    function createTask() {
-      const task = {
-        title: document.getElementById('create-title').value,
-        description: document.getElementById('create-description').value,
-        status: document.getElementById('create-status').value,
-        priority: document.getElementById('create-priority').value,
-        due_date: document.getElementById('create-due-date').value,
-      };
-      fetch('/api/tasks', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(task)
-      }).then(() => {
-        document.getElementById('create-modal').style.display = 'none';
-        fetchTasks();
-      });
-    }
-
-    window.onclick = e => {
-      if (e.target.classList.contains('modal')) {
-        e.target.style.display = 'none';
-      }
-    };
-
-    fetchTasks();
+    loadTasks(true);
   </script>
 </body>
 </html>

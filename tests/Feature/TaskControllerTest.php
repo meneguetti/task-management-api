@@ -10,18 +10,16 @@ test('list tasks', function () {
     $numOfTasks = 3;
     Task::factory()->count(3)->create();
 
-    $response = $this->get('api/tasks');
+    $response = $this->get('api/v1/tasks');
     $response
         ->assertStatus(200)
-        ->assertJson(
-            fn (AssertableJson $json) => $json->has($numOfTasks)
-        );
+        ->assertJsonCount($numOfTasks, 'data');
 });
 
 test('creating task with invalid data fails', function () {
     $task = Task::factory()->make();
     $task->status = 'invalid status';
-    $response = $this->postJson('api/tasks', $task->toArray());
+    $response = $this->postJson('api/v1/tasks', $task->toArray());
     $response
         ->assertStatus(422)
         ->assertJsonValidationErrors('status');
@@ -29,7 +27,7 @@ test('creating task with invalid data fails', function () {
 
 test('create task', function () {
     $task = Task::factory()->make();
-    $response = $this->postJson('api/tasks', $task->toArray());
+    $response = $this->postJson('api/v1/tasks', $task->toArray());
     $response
         ->assertStatus(201)
         ->assertJsonPath('data.id', 1);
@@ -37,7 +35,7 @@ test('create task', function () {
 
 test('updating task with invalid data fails', function () {
     $task = Task::factory()->create();
-    $response = $this->putJson("api/tasks/{$task->id}", ['status' => 'invalid status']);
+    $response = $this->putJson("api/v1/tasks/{$task->id}", ['status' => 'invalid status']);
     $response
         ->assertStatus(422)
         ->assertJsonValidationErrors('status');
@@ -47,7 +45,7 @@ test('updating task by non existing id fails', function () {
     $task = Task::factory()->create();
     $task->title = 'Title updated';
     $nonExistingId = $task->id + 1;
-    $response = $this->putJson("api/tasks/{$nonExistingId}", $task->toArray());
+    $response = $this->putJson("api/v1/tasks/{$nonExistingId}", $task->toArray());
     $response
         ->assertStatus(404)
         ->assertJson([
@@ -59,7 +57,7 @@ test('update task (put)', function () {
     $task = Task::factory()->create();
     $titleUpdated = 'Title updated';
     $task->title = $titleUpdated;
-    $response = $this->putJson("api/tasks/{$task->id}", $task->toArray());
+    $response = $this->putJson("api/v1/tasks/{$task->id}", $task->toArray());
     $response
         ->assertStatus(200)
         ->assertJsonPath('data.title', $titleUpdated);
@@ -68,7 +66,7 @@ test('update task (put)', function () {
 test('update task (patch)', function () {
     $task = Task::factory()->create();
     $titleUpdated = 'Title updated';
-    $response = $this->putJson("api/tasks/{$task->id}", ['title' => $titleUpdated]);
+    $response = $this->putJson("api/v1/tasks/{$task->id}", ['title' => $titleUpdated]);
     $response
         ->assertStatus(200)
         ->assertJsonPath('data.title', $titleUpdated)
@@ -78,7 +76,7 @@ test('update task (patch)', function () {
 test('fetching task by invalid id fails', function () {
     $task = Task::factory()->create();
     $nonExistingId = $task->id + 1;
-    $response = $this->getJson("api/tasks/{$nonExistingId}");
+    $response = $this->getJson("api/v1/tasks/{$nonExistingId}");
     $response
         ->assertStatus(404)
         ->assertJson([
@@ -88,7 +86,7 @@ test('fetching task by invalid id fails', function () {
 
 test('fetch task by id', function () {
     $task = Task::factory()->create();
-    $response = $this->getJson("api/tasks/{$task->id}");
+    $response = $this->getJson("api/v1/tasks/{$task->id}");
     $response
         ->assertStatus(200)
         ->assertJsonPath('data.title', $task->title);
@@ -96,6 +94,6 @@ test('fetch task by id', function () {
 
 test('delete task', function () {
     $task = Task::factory()->create();
-    $response = $this->deleteJson("api/tasks/{$task->id}");
+    $response = $this->deleteJson("api/v1/tasks/{$task->id}");
     $response->assertStatus(200);
 });

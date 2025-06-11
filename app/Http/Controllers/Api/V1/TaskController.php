@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Resources\TaskCollection;
 use App\Models\Task;
 
 class TaskController extends Controller
@@ -13,7 +15,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return Task::all();
+        return new TaskCollection(Task::orderByDesc('due_date')->paginate(3));
     }
 
     /**

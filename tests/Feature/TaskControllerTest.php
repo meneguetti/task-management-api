@@ -16,3 +16,12 @@ test('list tasks', function () {
         fn (AssertableJson $json) => $json->has($numOfTasks)
     );
 });
+
+test('fail when creating task with invalid data', function () {
+    $task = Task::factory()->make();
+    $task->status = 'invalid status';
+
+    $response = $this->post('api/tasks', $task->toArray());
+    $response->assertStatus(422);
+    $response->assertJson();
+});

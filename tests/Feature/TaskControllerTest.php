@@ -55,3 +55,22 @@ test('update task', function () {
         ->assertStatus(200)
         ->assertJsonPath('data.title', $titleUpdated);
 });
+
+test('fetching task by invalid id fails', function () {
+    $task = Task::factory()->create();
+    $nonExistingId = $task->id + 1;
+    $response = $this->getJson("api/tasks/{$nonExistingId}");
+    $response
+        ->assertStatus(404)
+        ->assertJson([
+            'message' => "No query results for model [App\\Models\\Task] {$nonExistingId}"
+        ]);
+});
+
+test('fetch task by id', function () {
+    $task = Task::factory()->create();
+    $response = $this->getJson("api/tasks/{$task->id}");
+    $response
+        ->assertStatus(200)
+        ->assertJsonPath('data.title', $task->title);
+});

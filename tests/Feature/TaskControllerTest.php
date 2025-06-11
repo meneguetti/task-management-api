@@ -8,13 +8,14 @@ uses(RefreshDatabase::class);
 
 test('list tasks', function () {
     $numOfTasks = 3;
-    $tasks = Task::factory()->count(3)->create();
+    Task::factory()->count(3)->create();
 
     $response = $this->get('api/tasks');
-    $response->assertStatus(200);
-    $response->assertJson(
-        fn (AssertableJson $json) => $json->has($numOfTasks)
-    );
+    $response
+        ->assertStatus(200)
+        ->assertJson(
+            fn (AssertableJson $json) => $json->has($numOfTasks)
+        );
 });
 
 test('creating task with invalid data fails', function () {
@@ -29,6 +30,28 @@ test('creating task with invalid data fails', function () {
 test('create task', function () {
     $task = Task::factory()->make();
     $response = $this->postJson('api/tasks', $task->toArray());
-    $response->assertStatus(201);
-    $response->assertJson(['id' => 1]);
+    $response
+        ->assertStatus(201)
+        ->assertJsonPath('data.id', 1);
+});
+
+test('updating task with invalid data fails', function () {
+    $task = Task::factory()->create();
+    $titleUpdated = 'Title updated'; 
+    $task->title = $titleUpdated;
+    unset($task->status);
+    $response = $this->putJson("api/tasks/{$task->id}", $task->toArray());
+    $response
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('status');
+});
+
+test('update task', function () {
+    $task = Task::factory()->create();
+    $titleUpdated = 'Title updated'; 
+    $task->title = $titleUpdated;
+    $response = $this->putJson("api/tasks/{$task->id}", $task->toArray());
+    $response
+        ->assertStatus(200)
+        ->assertJsonPath('data.title', $titleUpdated);
 });

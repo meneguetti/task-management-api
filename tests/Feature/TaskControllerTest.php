@@ -46,6 +46,18 @@ test('updating task with invalid data fails', function () {
         ->assertJsonValidationErrors('status');
 });
 
+test('updating task by non existing id fails', function () {
+    $task = Task::factory()->create();
+    $task->title = 'Title updated';
+    $nonExistingId = $task->id + 1;
+    $response = $this->putJson("api/tasks/{$nonExistingId}", $task->toArray());
+    $response
+        ->assertStatus(404)
+        ->assertJson([
+            'message' => "No query results for model [App\\Models\\Task] {$nonExistingId}"
+        ]);
+});
+
 test('update task', function () {
     $task = Task::factory()->create();
     $titleUpdated = 'Title updated'; 
@@ -73,4 +85,10 @@ test('fetch task by id', function () {
     $response
         ->assertStatus(200)
         ->assertJsonPath('data.title', $task->title);
+});
+
+test('delete task', function () {
+    $task = Task::factory()->create();
+    $response = $this->deleteJson("api/tasks/{$task->id}");
+    $response->assertStatus(200);
 });

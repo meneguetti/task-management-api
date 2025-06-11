@@ -6,7 +6,7 @@ use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class TaskRequest extends FormRequest
+class CreateTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TaskRequest;
+use App\Http\Requests\CreateTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 
 class TaskController extends Controller
@@ -26,7 +27,7 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TaskRequest $request)
+    public function store(CreateTaskRequest $request)
     {
         $task = Task::create($request->validated());
 
@@ -57,7 +58,7 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(TaskRequest $request, Task $task)
+    public function update(UpdateTaskRequest $request, Task $task)
     {
         $task->update($request->validated());
 

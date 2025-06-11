@@ -37,10 +37,7 @@ test('create task', function () {
 
 test('updating task with invalid data fails', function () {
     $task = Task::factory()->create();
-    $titleUpdated = 'Title updated';
-    $task->title = $titleUpdated;
-    unset($task->status);
-    $response = $this->putJson("api/tasks/{$task->id}", $task->toArray());
+    $response = $this->putJson("api/tasks/{$task->id}", ['status' => 'invalid status']);
     $response
         ->assertStatus(422)
         ->assertJsonValidationErrors('status');
@@ -58,7 +55,7 @@ test('updating task by non existing id fails', function () {
         ]);
 });
 
-test('update task', function () {
+test('update task (put)', function () {
     $task = Task::factory()->create();
     $titleUpdated = 'Title updated';
     $task->title = $titleUpdated;
@@ -66,6 +63,16 @@ test('update task', function () {
     $response
         ->assertStatus(200)
         ->assertJsonPath('data.title', $titleUpdated);
+});
+
+test('update task (patch)', function () {
+    $task = Task::factory()->create();
+    $titleUpdated = 'Title updated';
+    $response = $this->putJson("api/tasks/{$task->id}", ['title' => $titleUpdated]);
+    $response
+        ->assertStatus(200)
+        ->assertJsonPath('data.title', $titleUpdated)
+        ->assertJsonPath('data.description', $task->description);
 });
 
 test('fetching task by invalid id fails', function () {

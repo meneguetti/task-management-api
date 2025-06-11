@@ -22,10 +22,10 @@ class TaskFactory extends Factory
     {
         return [
             'title' => fake()->name(),
-            'description'=> fake()->text(),
+            'description' => fake()->text(),
             'status' => Arr::random(Task::STATUSES),
             'priority' => Arr::random(Task::PRIORITIES),
-            'due_date' => now()->addDays(rand(1,30))->format('Y-m-d'),
+            'due_date' => now()->addDays(rand(1, 30))->format('Y-m-d'),
         ];
     }
 }

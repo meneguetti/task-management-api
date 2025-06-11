@@ -37,7 +37,7 @@ test('create task', function () {
 
 test('updating task with invalid data fails', function () {
     $task = Task::factory()->create();
-    $titleUpdated = 'Title updated'; 
+    $titleUpdated = 'Title updated';
     $task->title = $titleUpdated;
     unset($task->status);
     $response = $this->putJson("api/tasks/{$task->id}", $task->toArray());
@@ -60,7 +60,7 @@ test('updating task by non existing id fails', function () {
 
 test('update task', function () {
     $task = Task::factory()->create();
-    $titleUpdated = 'Title updated'; 
+    $titleUpdated = 'Title updated';
     $task->title = $titleUpdated;
     $response = $this->putJson("api/tasks/{$task->id}", $task->toArray());
     $response

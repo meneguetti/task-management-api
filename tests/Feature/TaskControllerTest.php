@@ -17,11 +17,18 @@ test('list tasks', function () {
     );
 });
 
-test('fail when creating task with invalid data', function () {
+test('creating task with invalid data fails', function () {
     $task = Task::factory()->make();
     $task->status = 'invalid status';
+    $response = $this->postJson('api/tasks', $task->toArray());
+    $response
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('status');
+});
 
-    $response = $this->post('api/tasks', $task->toArray());
-    $response->assertStatus(422);
-    $response->assertJson();
+test('create task', function () {
+    $task = Task::factory()->make();
+    $response = $this->postJson('api/tasks', $task->toArray());
+    $response->assertStatus(201);
+    $response->assertJson(['id' => 1]);
 });

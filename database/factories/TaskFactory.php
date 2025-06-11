@@ -25,7 +25,7 @@ class TaskFactory extends Factory
             'description'=> fake()->text(),
             'status' => Arr::random(Task::STATUSES),
             'priority' => Arr::random(Task::PRIORITIES),
-            'due_date' => now()->addDays(rand(1,30)),
+            'due_date' => now()->addDays(rand(1,30))->format('Y-m-d'),
         ];
     }
 }

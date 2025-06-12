@@ -15,15 +15,14 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return new TaskCollection(Task::orderByDesc('due_date')->paginate(3));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        /**
+         * perPage was hardcoded to 3 just to provide one example of infinite 
+         * scroll feature. In a real situation, this constant could be placed 
+         * in configuration file etc.
+         */
+        return new TaskCollection(
+            Task::orderByDesc('due_date')->paginate(3)
+        );
     }
 
     /**
@@ -47,14 +46,6 @@ class TaskController extends Controller
         return response()->json([
             'data' => $task,
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        //
     }
 
     /**

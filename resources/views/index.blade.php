@@ -126,5 +126,6 @@
   <div id="notification"></div>
 
   <script type="text/javascript" src="js/general.js"></script>
+  @vite(['resources/js/app.js'])
 </body>
 </html>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\TaskUpdated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\FilterTaskRequest;
@@ -53,6 +54,12 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task)
     {
         $task->update($request->validated());
+
+        try {
+            TaskUpdated::dispatch($task);
+        } catch (\Throwable $e) {
+            logger()->error('TaskUpdated Event: Probably Laravel Reverb is not running!');
+        }
 
         return response()->json([
             'message' => 'Task updated successfully.',

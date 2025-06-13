@@ -13,6 +13,12 @@
 - ``` sail artisan migrate ```
 - In case you want sample tasks
   - ``` sail artisan db:seed ```
+- ``` sail artisan reverb:install ```
+- ``` npm install --save-dev laravel-echo pusher-js ```
+
+To use Laravel Echo with Laravel Reverb, install and execute the server
+- ``` sail artisan reverb:install ```
+- ``` sail artisan reverb:start ```
 
 ## Assumptions
 - Initially I considered status and priority columns as string/enum for simplicity, latelly I noticed it should be foreign keys so that I could use eager loading. If I had more time, I would fix that.

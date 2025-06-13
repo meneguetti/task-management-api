@@ -55,6 +55,18 @@ function renderTask(task) {
     document.querySelector(`.${task.status} .droppable`).appendChild(div);
 }
 
+function updateRenderedTask(task) {
+    const renderedTask = document.querySelectorAll(`[data-id="${task.id}"]`)[0] ?? null;
+    
+    if(renderedTask) {
+        renderedTask.innerHTML = `
+            <div><strong>${task.title}</strong></div>
+            <div>Priority: ${priorities[task.priority]}</div>
+            <div>Due: ${task.due_date}</div>
+        `;
+    }  
+}
+
 async function updateTaskStatus(id, status) {
     try {
         await fetch(`/api/v1/tasks/${id}`, {

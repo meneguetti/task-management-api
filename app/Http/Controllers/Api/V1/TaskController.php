@@ -17,8 +17,8 @@ class TaskController extends Controller
     public function index(FilterTaskRequest $request)
     {
         /**
-         * perPage was hardcoded to 3 just to provide one example of infinite 
-         * scroll feature. In a real situation, this constant could be placed 
+         * perPage was hardcoded to 3 just to provide one example of infinite
+         * scroll feature. In a real situation, this constant could be placed
          * in configuration file etc.
          */
         return new TaskCollection(Task::getTasksToBoard($request->validated()));
@@ -68,7 +68,7 @@ class TaskController extends Controller
         $task->delete();
 
         return response()->json([
-            'message' => 'Task deleted successfully.'
+            'message' => 'Task deleted successfully.',
         ]);
     }
 }

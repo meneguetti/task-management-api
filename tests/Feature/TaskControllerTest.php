@@ -2,7 +2,6 @@
 
 use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Testing\Fluent\AssertableJson;
 
 uses(RefreshDatabase::class);
 
@@ -49,7 +48,7 @@ test('updating task by non existing id fails', function () {
     $response
         ->assertStatus(404)
         ->assertJson([
-            'message' => "No query results for model [App\\Models\\Task] {$nonExistingId}"
+            'message' => "No query results for model [App\\Models\\Task] {$nonExistingId}",
         ]);
 });
 
@@ -80,7 +79,7 @@ test('fetching task by invalid id fails', function () {
     $response
         ->assertStatus(404)
         ->assertJson([
-            'message' => "No query results for model [App\\Models\\Task] {$nonExistingId}"
+            'message' => "No query results for model [App\\Models\\Task] {$nonExistingId}",
         ]);
 });
 

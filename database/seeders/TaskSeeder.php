@@ -22,7 +22,7 @@ class TaskSeeder extends Seeder
             ['Edit Task', 'done', 'high', now()->subDays(1)],
             ['Delete Task', 'done', 'high', now()],
             ['Filter Tasks', 'done', 'medium', now()],
-            
+
             // IN PROGRESS
             ['Laravel Echo', 'in_progress', 'medium', now()->addDays(5)],
             ['Websockets', 'in_progress', 'medium', now()->addDays(5)],
@@ -34,7 +34,7 @@ class TaskSeeder extends Seeder
             ['Submit: Record Video', 'todo', 'high', now()->addDays(10)],
             ['Submit: Add GitHub URL', 'todo', 'high', now()->addDays(10)],
             ['Submit: Add Notes', 'todo', 'low', now()->addDays(10)],
-            
+
             // BACKLOG
             ['Implement Vue.js', 'backlog', 'low', now()->addDays(9)],
             ['Use Pinia', 'backlog', 'low', now()->addDays(9)],

@@ -30,22 +30,23 @@ class Task extends Model
         'due_date',
     ];
 
-    public static function getTasksToBoard(?array $filter){
+    public static function getTasksToBoard(?array $filter)
+    {
         return Task::orderByDesc('due_date')
             ->when($filter, function ($query, $filter) {
-                if(isset($filter['title'])){
-                    $query->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($filter['title']) . '%']);
+                if (isset($filter['title'])) {
+                    $query->whereRaw('LOWER(title) LIKE ?', ['%'.strtolower($filter['title']).'%']);
                 }
-                if(isset($filter['status'])){
+                if (isset($filter['status'])) {
                     $query->whereIn('status', $filter['status']);
                 }
-                if(isset($filter['priority'])){
+                if (isset($filter['priority'])) {
                     $query->whereIn('priority', $filter['priority']);
                 }
-                if(isset($filter['due_date_from'])){
+                if (isset($filter['due_date_from'])) {
                     $query->where('due_date', '>=', $filter['due_date_from']);
                 }
-                if(isset($filter['due_date_to'])){
+                if (isset($filter['due_date_to'])) {
                     $query->where('due_date', '<=', $filter['due_date_to']);
                 }
             })

@@ -6,6 +6,7 @@ const columns = ["backlog", "todo", "in_progress", "done"];
 const priorities = { low: "Low", medium: "Medium", high: "High" };
 let tasks = [];
 let nextPageUrl = "/api/v1/tasks";
+let nextPages = [];
 
 function createColumn(status) {
     const column = document.createElement("div");
@@ -99,8 +100,12 @@ async function loadTasks(reset = false) {
         document.getElementById("board").innerHTML = "";
         columns.forEach(createColumn);
         nextPageUrl = "/api/v1/tasks";
+        nextPages = [];
     }
     if (!nextPageUrl) return;
+
+    if (nextPages.includes(nextPageUrl)) return;
+    nextPages.push(nextPageUrl);
 
     const res = await fetch(nextPageUrl, { headers: headers });
     const data = await res.json();

@@ -7,7 +7,9 @@
   <link rel="stylesheet" href="css/general.css" type="text/css">
 </head>
 <body>
-  <h1>Task Management Board</h1>
+  <h1>
+    Task Management Board <button onclick="openFilterModal()" id="filter-buttom" title="Filter Tasks">🔍</button>
+  </h1> 
   <div class="board" id="board"></div>
 
   <!-- Edit Modal -->
@@ -80,9 +82,49 @@
       <button onclick="closeModal('delete-modal')">No</button>
     </div>
   </div>
+  
+    <!-- Filter Modal -->
+    <div id="filter-modal" class="modal">
+        <div class="modal-header">
+            <span class="modal-title">Filter Tasks</span>
+            <span class="close-modal" onclick="closeFilterModal()">×</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="filter-title">Title</label>
+                <input type="text" id="filter-title">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <label class="form-control"><input type="checkbox" name="status" value="backlog"> Backlog</label>
+                <label class="form-control"><input type="checkbox" name="status" value="todo"> Todo </label>
+                <label class="form-control"><input type="checkbox" name="status" value="in_progress"> In Progress</label>
+                <label class="form-control"><input type="checkbox" name="status" value="done"> Done</label>
+            </div>
+
+            <div class="form-group">
+                <label>Priority</label>
+                <label class="form-control"><input type="checkbox" name="priority" value="low"> Low</label>
+                <label class="form-control"><input type="checkbox" name="priority" value="medium"> Medium</label>
+                <label class="form-control"><input type="checkbox" name="priority" value="high"> High</label>
+            </div>
+
+            <div class="form-group">
+                <label>Due Date Range</label>
+                <input type="date" id="due-from"> to <input type="date" id="due-to">
+            </div>
+
+            <div class="form-group">
+                <button onclick="applyTaskFilter()">Filter</button>
+            </div>
+            
+        </div>
+    </div>
+
   <div id="no-more">No more tasks to display</div>
   <div id="notification"></div>
-  
+
   <script type="text/javascript" src="js/general.js"></script>
 </body>
 </html>

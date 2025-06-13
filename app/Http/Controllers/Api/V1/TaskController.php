@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTaskRequest;
+use App\Http\Requests\FilterTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskCollection;
 use App\Models\Task;
@@ -13,16 +14,14 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(FilterTaskRequest $request)
     {
         /**
          * perPage was hardcoded to 3 just to provide one example of infinite 
          * scroll feature. In a real situation, this constant could be placed 
          * in configuration file etc.
          */
-        return new TaskCollection(
-            Task::orderByDesc('due_date')->paginate(3)
-        );
+        return new TaskCollection(Task::getTasksToBoard($request->validated()));
     }
 
     /**

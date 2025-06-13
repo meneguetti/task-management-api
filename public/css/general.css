@@ -58,3 +58,16 @@ h1 { text-align: center; margin-bottom: 20px;}
 .trash { color: red; cursor: pointer; font-size: 18px; margin-left: auto; }
 #no-more { text-align: center; color: #666; margin-top: 10px; display: none; }
 #notification { text-align: center; color: black; margin-top: 10px; display: none; }
+#filter-buttom { margin: 0 0 0 10px; padding: 5px; border: 1px lightgray solid; cursor: pointer; vertical-align: middle;}
+#filter-modal { z-index: 1001; }
+.form-control {
+    display: grid;
+    grid-template-columns: 1em auto;
+    gap: 0.5em;
+}
+.form-control input{
+    width: auto;
+}
+.form-group .form-control {
+    font-weight: normal;
+}

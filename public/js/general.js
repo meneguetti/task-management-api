@@ -134,7 +134,7 @@ function openCreateModal(status) {
     document.getElementById("create-modal").style.display = "flex";
 }
 
-function createTask() {
+async function createTask() {
     const task = {
         title: document.getElementById("create-title").value,
         description: document.getElementById("create-description").value,
@@ -142,16 +142,21 @@ function createTask() {
         priority: document.getElementById("create-priority").value,
         due_date: document.getElementById("create-due-date").value,
     };
-    fetch("/api/v1/tasks", {
+
+    const res = await fetch("/api/v1/tasks/", {
         method: "POST",
         headers: headers,
         body: JSON.stringify(task),
-    }).then(() => {
-        document.getElementById("create-modal").style.display = "none";
-        notification("Task Created!", "green");
-
-        loadTasks();
     });
+    const responseJson = await res.json();
+    
+    document.getElementById("create-modal").style.display = "none";
+    notification("Task Created!", "green");
+    
+    const taskCreated = responseJson.data;
+    tasks.push(taskCreated);
+    renderTask(taskCreated);
+    updateCounts();
 }
 
 function notification(text, background) {
@@ -185,7 +190,8 @@ function updateField(field, value) {
         body: JSON.stringify({ [field]: value }),
     }).then(() => {
         notification("Task Updated!", "darkorange");
-        loadTasks();
+        tasks = [];
+        loadTasks(true);
     });
 }
 
@@ -240,6 +246,58 @@ async function deleteTask() {
         }
     } catch (e) {
         alert("Error deleting task.");
+    }
+}
+
+function openFilterModal() {
+    document.getElementById("filter-modal").style.display = "block";
+}
+
+function closeFilterModal() {
+    document.getElementById("filter-modal").style.display = "none";
+}
+
+async function applyTaskFilter() {
+    const title = document.getElementById("filter-title").value.trim();
+    const status = [
+        ...document.querySelectorAll('input[name="status"]:checked'),
+    ].map((cb) => cb.value);
+    const priority = [
+        ...document.querySelectorAll('input[name="priority"]:checked'),
+    ].map((cb) => cb.value);
+    const dueFrom = document.getElementById("due-from").value;
+    const dueTo = document.getElementById("due-to").value;
+
+    const hasInput =
+        title || status.length || priority.length || dueFrom || dueTo;
+
+    const params = new URLSearchParams();
+    if (title) params.append("title", title);
+    status.forEach((s) => params.append("status[]", s));
+    priority.forEach((p) => params.append("priority[]", p));
+    if (dueFrom) params.append("due_date_from", dueFrom);
+    if (dueTo) params.append("due_date_to", dueTo);
+
+    try {
+        const response = await fetch(`/api/v1/tasks?${params.toString()}`, {
+            headers: headers,
+        });
+        if (!response.ok) throw response;
+
+        const data = await response.json();
+        tasks = data.data; // reset current task list
+        document.getElementById("board").innerHTML = "";
+        columns.forEach(createColumn);
+        tasks.forEach((task) => renderTask(task));
+        nextPageUrl = data.links?.next;
+        updateCounts();
+        closeFilterModal();
+    } catch (err) {
+        if (err.status === 422) {
+            alert("Validation failed while filtering tasks.");
+        } else {
+            alert("Failed to load filtered tasks.");
+        }
     }
 }
 

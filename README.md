@@ -1,5 +1,7 @@
 <h1 align="center"><a href="" target="_blank">Task Management - API (Laravel)</a></h1>
 
+![Demo](public/img/demo.png)
+
 ## Presentation Video Demo
 - 3 minutes video
   - https://drive.google.com/file/d/11mDYD_GYjPHDrHDFemVHgPnOpyULIb-P/view

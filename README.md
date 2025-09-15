@@ -21,7 +21,6 @@
 
 To use Laravel Echo with Laravel Reverb, install:
 - ``` sail artisan reverb:install ```
-- ``` npm install --save-dev laravel-echo pusher-js ```
 - After that, change .env:
   - use .env.example to copy and paste VITE_APP_NAME, REVERB_APP_ID and VITE_REVERB key/values
   - also change BROADCAST_DRIVER to reverb

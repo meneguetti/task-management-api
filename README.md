@@ -1,20 +1,28 @@
 <h1 align="center"><a href="" target="_blank">Task Management - API (Laravel)</a></h1>
 
-<p align="center">
-
-</p>
-
 ## Presentation Video Demo
 - 3 minutes video
-  - https://drive.google.com/file/d/14i-r1YrZMRewExmK55EeAYZhhMJTDEzX/view
+  - https://drive.google.com/file/d/11mDYD_GYjPHDrHDFemVHgPnOpyULIb-P/view
+
+## Technologies
+- Laravel 10
+- Laravel Reverb (for updating tasks on board via websocket)
+- Laravel Sail 
+- Postgres 17
+- Pest 2 (phpunit alternative for using DDD)
 
 ## Setup
 - ``` composer install ```
 - ``` php artisan sail:install ```
   - choose pgsql
-- ``` sudo service apache2 stop	```
+- You may need to stop some services to avoid conflict with ports
+    For instance:
+        - ``` sudo service apache2 stop	```
+            or - ``` /etc/init.d/apache2 stop	```        
 - ``` alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)' ```
-  - If it doesn't work, use vendor/bin/sail for each sail command below    
+  - OR use vendor/bin/sail for each sail command below
+- In the project root folder, execute
+        cp .env.example .env   
 - ``` sail artisan migrate ```
 - In case you want sample tasks
   - ``` sail artisan db:seed ```

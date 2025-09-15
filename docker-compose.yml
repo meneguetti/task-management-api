@@ -20,7 +20,7 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
-        hostname: task-manager.localhost
+        hostname: task-manager-api.localhost
         networks:
             - sail
         depends_on:

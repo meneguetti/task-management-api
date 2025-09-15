@@ -1,4 +1,4 @@
-<h1 align="center"><a href="" target="_blank">Task Management</a></h1>
+<h1 align="center"><a href="" target="_blank">Task Management - API (Laravel)</a></h1>
 
 <p align="center">
 
@@ -14,6 +14,7 @@
   - choose pgsql
 - ``` sudo service apache2 stop	```
 - ``` alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)' ```
+  - If it doesn't work, use vendor/bin/sail for each sail command below    
 - ``` sail artisan migrate ```
 - In case you want sample tasks
   - ``` sail artisan db:seed ```

@@ -50,6 +50,6 @@ class Task extends Model
                     $query->where('due_date', '<=', $filter['due_date_to']);
                 }
             })
-            ->paginate(3);
+            ->paginate(config('task-management.tasks-per-page'));
     }
 }
